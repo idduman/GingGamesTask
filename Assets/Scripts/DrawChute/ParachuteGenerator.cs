@@ -47,12 +47,32 @@ public class ParachuteGenerator : MonoBehaviour
             var brushOffset = new Vector3(extents.x * relativeBrushSize.x * dir.x,
                 extents.y * relativeBrushSize.y * dir.y, 0f);
             
-            _vertices.Add(startPoint + offset - brushOffset);
-            _vertices.Add(startPoint + offset + brushOffset);
+            _vertices.Add(offset - brushOffset);
+            _vertices.Add(offset + brushOffset);
 
         }
 
-        for (int i = 0; i < _vertices.Count - 2; i++)
+        for (int i = 1; i < _vertices.Count - 1; i++)
+        {
+            var v = _vertices[i];
+            var vP = _vertices[i - 1] - v;
+            var vN = _vertices[i + 1] - v;
+
+            if (Vector2.SignedAngle(vP, vN) > 0)
+            {
+                _triangles.Add(i);
+                _triangles.Add(i+1);
+                _triangles.Add(i-1);
+            }
+            else
+            {
+                _triangles.Add(i);
+                _triangles.Add(i-1);
+                _triangles.Add(i+1);
+            }
+        }
+        
+        /*for (int i = 0; i < _vertices.Count - 2; i++)
         {
             if (i % 2 == 0)
             {
@@ -66,41 +86,11 @@ public class ParachuteGenerator : MonoBehaviour
                 _triangles.Add(i+2);
                 _triangles.Add(i+1);
             }
-            
-            /*if (_vertices[i + 2].x >= _vertices[i].x)
-            {
-                if (i % 2 == 0)
-                {
-                    _triangles.Add(i);
-                    _triangles.Add(i+1);
-                    _triangles.Add(i+2);
-                }
-                else
-                {
-                    _triangles.Add(i);
-                    _triangles.Add(i+2);
-                    _triangles.Add(i+1);
-                }
-            }
-            else
-            {
-                if (i % 2 == 0)
-                {
-                    _triangles.Add(i);
-                    _triangles.Add(i+2);
-                    _triangles.Add(i+3);
-                }
-                else
-                {
-                    _triangles.Add(i);
-                    _triangles.Add(i-1);
-                    _triangles.Add(i+2);
-                }
-            }*/
-        }
+        }*/
         
         _mesh.Clear();
         _mesh.vertices = _vertices.ToArray();
         _mesh.triangles = _triangles.ToArray();
+        _mesh.RecalculateNormals();
     }
 }

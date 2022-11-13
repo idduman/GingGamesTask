@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 
@@ -6,6 +7,8 @@ using UnityEngine;
 [RequireComponent(typeof(Joint))]
 public class Balloon : MonoBehaviour
 {
+    [SerializeField] private Transform _topPoint;
+    [SerializeField] private Transform _bottomPoint;
     [SerializeField] private float _maxSize = 1;
     private Rigidbody _rb;
     private LineRenderer _lineRenderer;
@@ -25,14 +28,15 @@ public class Balloon : MonoBehaviour
     {
         if (!Active)
             return;
-        
+
+        //_joint.anchor = -0.5f * transform.up;
         var scale = transform.localScale;
         if(scale.magnitude < (_maxSize * Vector3.one).magnitude)
             transform.localScale += Vector3.one * Time.fixedDeltaTime;
         
-        _rb.AddForce(Vector3.up * (12f * Time.fixedDeltaTime));
+        _rb.AddForceAtPosition(Vector3.up * (12f * Time.fixedDeltaTime), _topPoint.position);
         
-        _lineRenderer.SetPosition(0, transform.position);
+        _lineRenderer.SetPosition(0, _bottomPoint.position);
         _lineRenderer.SetPosition(1, _joint.connectedBody.position);
     }
 

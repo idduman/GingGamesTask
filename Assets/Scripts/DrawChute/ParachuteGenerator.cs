@@ -26,8 +26,6 @@ public class ParachuteGenerator : MonoBehaviour
     
     public void Generate(List<Vector2> points, Vector2 relativeBrushSize)
     {
-        var extents = _boxCollider.bounds.extents;
-
         _vertices.Clear();
         _triangles.Clear();
 
@@ -45,13 +43,13 @@ public class ParachuteGenerator : MonoBehaviour
     private void CalculateMesh(List<Vector2> points, Vector2 thickness)
     {
         var extents = _boxCollider.bounds.extents;
-
-        //Generate Front Face
+        
+        //Generate Vertices
         Vector2 dir = Vector2.zero;
         for (int i = 0; i < points.Count; i++)
         {
             var p = points[i];
-            var offset = 2f * new Vector3(p.x * extents.x, p.y * extents.y, 0f);
+            var offset = new Vector3(2f * p.x * extents.x, 2f *  p.y * extents.y, -extents.z);
             
             if(i == 0)
                 dir = Vector2.Perpendicular(points[i+1] - p).normalized;
@@ -65,6 +63,7 @@ public class ParachuteGenerator : MonoBehaviour
             _vertices.Add(offset + brushOffset);
 
         }
+        //Generate Front Face
         for (int i = 1; i < _vertices.Count - 1; i++)
         {
             var v = _vertices[i];

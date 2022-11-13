@@ -55,6 +55,7 @@ public class DrawOnRect : MonoBehaviour
 
         _previousPos = pData.position;
         var perc = CalculatePercentage(pData);
+        _moved = true;
         _sampledPoints.Add(perc);
         Paint(perc);
     }
@@ -65,11 +66,13 @@ public class DrawOnRect : MonoBehaviour
             return;
         
         _selected = false;
-        _moved = false;
-        _parachute.Generate(_sampledPoints, new Vector2(
-            (float)_brushSize/_textureSize.x, (float)_brushSize/_textureSize.y));
-        _sampledPoints.Clear();
-        
+        if (_moved)
+        {
+            _moved = false;
+            _parachute.Generate(_sampledPoints, new Vector2(
+                (float)_brushSize/_textureSize.x, (float)_brushSize/_textureSize.y));
+            _sampledPoints.Clear();
+        }
         _texture = new Texture2D(_textureSize.x, _textureSize.y);
         _image.texture = _texture;
     }

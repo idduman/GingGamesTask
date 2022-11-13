@@ -308,11 +308,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1024235134}
+  - component: {fileID: 1024235136}
   - component: {fileID: 1024235133}
   - component: {fileID: 1024235132}
   - component: {fileID: 1024235131}
   - component: {fileID: 1024235135}
-  - component: {fileID: 1024235136}
   m_Layer: 0
   m_Name: BalloonSpawner
   m_TagString: Untagged
@@ -424,10 +424,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dba386baf8e356445b8bba464d4aaadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _balloonPrefab: {fileID: 3962729325695162784, guid: d5d94f1f7db1fb341bc8bd240e0194fc, type: 3}
-  _spawnYOffset: 0.4
-  _balloonSpawnInterval: 3
-  _maxBalloons: 8
+  _balloonPrefabs:
+  - {fileID: 3962729325695162784, guid: d5d94f1f7db1fb341bc8bd240e0194fc, type: 3}
+  - {fileID: 7571314379543321833, guid: 57802ef2082016342b93b7c3c8906005, type: 3}
+  - {fileID: 7571314379543321833, guid: cd6ed3fb94cdddf4da9b3bb4a7fa64f2, type: 3}
+  - {fileID: 7571314379543321833, guid: 7bf2836b686c80248b4667d2515083be, type: 3}
+  - {fileID: 7571314379543321833, guid: 0d09fa8e048cf994193496c792588fad, type: 3}
+  _spawnYOffset: 0.25
+  _balloonSpawnInterval: 2
+  _maxBalloons: 15
 --- !u!1 &1792278360
 GameObject:
   m_ObjectHideFlags: 0

@@ -35,6 +35,12 @@ public class Balloon : MonoBehaviour
             transform.localScale += Vector3.one * Time.fixedDeltaTime;
         
         _rb.AddForceAtPosition(Vector3.up * (12f * Time.fixedDeltaTime), _topPoint.position);
+    }
+
+    private void Update()
+    {
+        if (!Active)
+            return;
         
         _lineRenderer.SetPosition(0, _bottomPoint.position);
         _lineRenderer.SetPosition(1, _joint.connectedBody.position);

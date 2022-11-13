@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 [RequireComponent(typeof(Rigidbody))]
 public class BalloonSpawn : MonoBehaviour
 {
-    [SerializeField] private Balloon _balloonPrefab;
+    [SerializeField] private List<Balloon> _balloonPrefabs;
     [SerializeField] private float _spawnYOffset = 1f;
     [SerializeField] private float _balloonSpawnInterval = 3;
     [SerializeField] private int _maxBalloons = 12;
@@ -25,9 +25,9 @@ public class BalloonSpawn : MonoBehaviour
     {
         var randomPoint = Random.insideUnitCircle;
         var offset = _spawnYOffset * Vector3.up
-                     + 0.05f * new Vector3(randomPoint.x, 0f, randomPoint.y);
+                     + 0.03f * new Vector3(randomPoint.x, 0f, randomPoint.y);
         
-        var balloon = Instantiate(_balloonPrefab,
+        var balloon = Instantiate(_balloonPrefabs[_balloons.Count % _balloonPrefabs.Count],
             transform.position + offset, Quaternion.identity);
         _balloons.Add(balloon);
         balloon.SetConnectedBody(_rb);

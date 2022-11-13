@@ -29,20 +29,45 @@ public class ParachuteGenerator : MonoBehaviour
         var center = _boxCollider.bounds.center;
         var extents = _boxCollider.bounds.extents;
         var startPoint = _boxCollider.bounds.min;
-        var offsetY = extents.y * relativeBrushSize.y * Vector3.up;
-        
+
         _vertices.Clear();
         _triangles.Clear();
-        foreach (var p in points)
+
+        Vector2 dir = Vector2.zero;
+        for (int i = 0; i < points.Count; i++)
         {
+            var p = points[i];
             var offset = new Vector3(p.x * extents.x, p.y * extents.y, 0f);
-            _vertices.Add(startPoint + offset + offsetY);
-            _vertices.Add(startPoint + offset - offsetY);
+            
+            if(i == 0)
+                dir = Vector2.Perpendicular(points[i+1] - p).normalized;
+            else
+                dir = Vector2.Perpendicular(p - points[i-1]).normalized;
+
+            var brushOffset = new Vector3(extents.x * relativeBrushSize.x * dir.x,
+                extents.y * relativeBrushSize.y * dir.y, 0f);
+            
+            _vertices.Add(startPoint + offset - brushOffset);
+            _vertices.Add(startPoint + offset + brushOffset);
+
         }
 
         for (int i = 0; i < _vertices.Count - 2; i++)
         {
-            if (_vertices[i + 2].x >= _vertices[i].x)
+            if (i % 2 == 0)
+            {
+                _triangles.Add(i);
+                _triangles.Add(i+1);
+                _triangles.Add(i+2);
+            }
+            else
+            {
+                _triangles.Add(i);
+                _triangles.Add(i+2);
+                _triangles.Add(i+1);
+            }
+            
+            /*if (_vertices[i + 2].x >= _vertices[i].x)
             {
                 if (i % 2 == 0)
                 {
@@ -71,7 +96,7 @@ public class ParachuteGenerator : MonoBehaviour
                     _triangles.Add(i-1);
                     _triangles.Add(i+2);
                 }
-            }
+            }*/
         }
         
         _mesh.Clear();

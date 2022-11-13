@@ -6,14 +6,13 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.UI;
-
-[RequireComponent(typeof(RectTransform))]
-[RequireComponent(typeof(RawImage))]
 public class DrawOnRect : MonoBehaviour
 {
     [SerializeField] private int _brushSize = 5;
     [SerializeField] private Color _brushColor = Color.black;
     [SerializeField] private bool _sample = true;
+    [SerializeField] private ParachuteGenerator _parachute;
+    
     private RectTransform _rectTransform;
     private RawImage _image;
     private Texture2D _texture;
@@ -23,6 +22,8 @@ public class DrawOnRect : MonoBehaviour
     private Vector2 _previousPerc;
     private Vector2Int _textureSize;
     private bool _moved;
+
+    private List<Vector2> _sampledPoints = new List<Vector2>();
     void Awake()
     {
         _rectTransform = GetComponent<RectTransform>();
@@ -43,6 +44,7 @@ public class DrawOnRect : MonoBehaviour
         _selected = true;
         var perc = CalculatePercentage(pData);
         _previousPerc = perc;
+        _sampledPoints.Add(perc);
     }
 
     public void OnPointerMoved(BaseEventData data)
@@ -53,6 +55,7 @@ public class DrawOnRect : MonoBehaviour
 
         _previousPos = pData.position;
         var perc = CalculatePercentage(pData);
+        _sampledPoints.Add(perc);
         Paint(perc);
     }
 
@@ -63,8 +66,12 @@ public class DrawOnRect : MonoBehaviour
         
         _selected = false;
         _moved = false;
-        /*_texture = new Texture2D(_textureSize.x, _textureSize.y);
-        _image.texture = _texture;*/
+        _parachute.Generate(_sampledPoints, new Vector2(
+            (float)_brushSize/_textureSize.x, (float)_brushSize/_textureSize.y));
+        _sampledPoints.Clear();
+        
+        _texture = new Texture2D(_textureSize.x, _textureSize.y);
+        _image.texture = _texture;
     }
 
     private Vector2 CalculatePercentage(PointerEventData pData)
@@ -74,14 +81,6 @@ public class DrawOnRect : MonoBehaviour
 
         var rect = _rectTransform.rect;
         return new Vector2(localPoint.x / rect.width, localPoint.y / rect.height);
-    }
-
-    private void Paint2(Vector2 percentage)
-    {
-        var prevXPos = _previousPerc.x * _texture.width;
-        var prevYPos = _previousPerc.y * _texture.height;
-        var xPos = percentage.x * _texture.width;
-        var yPos = percentage.y * _texture.height;
     }
 
     private void Paint(Vector2 percentage)
@@ -141,21 +140,4 @@ public class DrawOnRect : MonoBehaviour
         return Mathf.Abs(x2_x1 * (lineP1.y - point.y) - y2_y1 * (lineP1.x - point.x))
                / Mathf.Sqrt(x2_x1 * x2_x1 + y2_y1 * y2_y1);
     }
-    
-    public static bool IsInPolygon(Vector2 point, List<Vector2> polygon)
-    {
-        bool result = false;
-        var a = polygon.Last();
-        foreach (var b in polygon)
-        {
-            if ((b.y < point.y) && (a.y >= point.y) || (a.y < point.y) && (b.y >= point.y))
-            {
-                if (b.x + (point.y - b.y) / (a.y - b.y) * (a.x - b.x) <= point.x)
-                    result = !result;
-            }
-            a = b;
-        }
-        return result;
-    }
-        
 }
